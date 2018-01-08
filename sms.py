@@ -2,19 +2,12 @@
 from time import sleep
 import serial
 from curses import ascii
-
-
-metadata=[]
-messages=[]
-
+import notify_sms
 ser = serial.Serial()
-
-
 ser.port = '/dev/ttyUSB1'
-
-
 ser.baudrate = 128000
 ser.timeout = 3
+
 ser.open()
 ser.write('AT+CMGF=1\r\n')
 #ser.write('AT+CPMS="SM","ME","MT"\r\n')
@@ -94,23 +87,41 @@ def stripit(string):
         if x!='\r\n':
            out.append(x.strip())
     return out
-           
+def message(string):
+     message=[]
+     out= []
+     for y in string:
+            if y.startswith('+CMGR:'):
+               t=y.split('"')
+               number=t[3]
+               date=t[5]
+               out={"number":number,"date":date}
+
+            elif y=='OK':
+                 pass
+            elif y==',':
+                 pass
+            elif y==' ':
+                 pass
+            elif y== '/n':
+                 pass
+            elif type(y)=='NoneType':
+                 pass
+            elif y.startswith('+CMTI'):
+                 parse_new(y)             
+            else :
+               if "message" in out:
+                   out["message"]=out["message"]+","+y
+               else:
+                   out.update({"message":y})   
+            #message.append(out)
+     return out      
 if __name__=="__main__":
     
     body=map(read_sms_body,read_sms_number("ALL"))
     output=[]
     msg=map(stripit,[x for x in body])
-    for x in msg:
-        for y in x:
-            if y.startswith('+CMGR:'):
-               t=y.split('"')
-               for w in t:
-                   print type(w)
-                
-            elif y=='OK':
-                 pass
-            elif y==',':
-                 pass
-            else :
-                 print y
-                
+    parsed_msg=map(message,[x for x in msg])
+    for x in parsed_msg:
+        print x    
+               
