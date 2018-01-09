@@ -108,7 +108,7 @@ def message(string):
             elif type(y)=='NoneType':
                  pass
             elif y.startswith('+CMTI'):
-                 parse_new(y)             
+                 pass             
             else :
                if "message" in out:
                    out["message"]=out["message"]+","+y

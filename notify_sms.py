@@ -26,36 +26,23 @@ ser.open()
 ser.write('AT+CMGF=1\r\n')
 #ser.write('AT+CPMS="SM","ME","MT"\r\n')
 ser.write('AT+CSCS=\"GSM\"\r\n')
-sleep(10)
+sleep(1)
 number=[]
 parsed_msg=[]
+#parse
 class Encoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
             return obj.isoformat()
         else:
-            return json.JSONEncoder.default(self, obj)
-
-def read_inifiny():
-    return ser.readlines()
-
-def parse_new(string):
-    #number=[]
-    for x in string:
-        if x.startswith("+CMTI:"):
-           number.append(x.split(',')[1].rstrip())
-           
+            return json.JSONEncoder.default(self, obj)         
      
 if __name__=="__main__":
    while True:
-         #msg=read_inifiny()
-         #new=parse_new(msg)
+         
          new=sms.read_sms_number("REC UNREAD")
-         #print new
          if new:
             n=map(sms.read_sms_body,[x for x in new])
-         #new=parse_new(n)
-          
             msg=map(sms.stripit,[x for x in n])
             parsed_msg=map(sms.message,[x for x in msg])
          
@@ -64,15 +51,11 @@ if __name__=="__main__":
              x.update({"timestamp":ist.localize(datetime.datetime.strptime(x["date"],'%y/%m/%d,%H:%M:%S+22'))})
              logger.info("Message Received From {} at {} , Content is {}".format(x["number"],x["date"],x["message"]))
              if x["message"]=="PASSWORD RESET":
-                payload=json.dumps(x,cls=Encoder)
-
-                
+                payload=json.dumps(x,cls=Encoder)             
                 t=requests.post('http://192.168.54.101:9200/password_reset/request',data=payload,headers=headers)
-                print t.text
-
-             #print x
+                logger.info("{} for {}".format(t.text,x))            
          parsed_msg=[]  
-         sleep(10)
+         sleep(1)
         
  
                
