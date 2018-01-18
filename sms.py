@@ -80,7 +80,9 @@ def read_sms_body(number):
     ser.write(cmd)
     ms=ser.readlines() 
     return ms
-  
+def delete_sms(number):
+    ser.write('AT+CMGD={}'.format(number))
+      
 def stripit(string):
     out=[]
     for x in string:

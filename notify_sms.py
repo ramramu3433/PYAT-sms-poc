@@ -45,7 +45,7 @@ if __name__=="__main__":
             n=map(sms.read_sms_body,[x for x in new])
             msg=map(sms.stripit,[x for x in n])
             parsed_msg=map(sms.message,[x for x in msg])
-         
+            map(sms.delete_sms,[x for x in new])        
          new=[]  
          for x in parsed_msg:
              x.update({"timestamp":ist.localize(datetime.datetime.strptime(x["date"],'%y/%m/%d,%H:%M:%S+22'))})
