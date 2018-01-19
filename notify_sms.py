@@ -24,11 +24,12 @@ ser.timeout = 1
 headers={"Content-type":"application/json"}
 ser.open()
 ser.write('AT+CMGF=1\r\n')
-#ser.write('AT+CPMS="SM","ME","MT"\r\n')
+ser.write('AT+CPMS="ME","SM","MT"\r\n')
 ser.write('AT+CSCS=\"GSM\"\r\n')
 sleep(1)
 number=[]
 parsed_msg=[]
+endpoint='http://192.168.54.101:9200/password_reset/request/'
 #parse
 class Encoder(json.JSONEncoder):
     def default(self, obj):
@@ -48,11 +49,16 @@ if __name__=="__main__":
             map(sms.delete_sms,[x for x in new])        
          new=[]  
          for x in parsed_msg:
+             x.update({"number":x["number"][3:]})
+             x.update({"message":x["message"].upper()})
              x.update({"timestamp":ist.localize(datetime.datetime.strptime(x["date"],'%y/%m/%d,%H:%M:%S+22'))})
+             x.update({"status":"new"})
+             
              logger.info("Message Received From {} at {} , Content is {}".format(x["number"],x["date"],x["message"]))
-             if x["message"]=="PASSWORD RESET":
-                payload=json.dumps(x,cls=Encoder)             
-                t=requests.post('http://192.168.54.101:9200/password_reset/request',data=payload,headers=headers)
+             if x["message"].upper()=="PASSWORD RESET":
+                payload=json.dumps(x,cls=Encoder)
+                url=endpoint+str(x["timestamp"])+x["number"]              
+                t=requests.put(url,data=payload,headers=headers)
                 logger.info("{} for {}".format(t.text,x))            
          parsed_msg=[]  
          sleep(1)
