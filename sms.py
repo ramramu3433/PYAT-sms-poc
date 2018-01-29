@@ -12,16 +12,17 @@ ser.open()
 ser.write('AT+CMGF=1\r\n')
 #ser.write('AT+CPMS="SM","ME","MT"\r\n')
 ser.write('AT+CSCS=\"GSM\"\r\n')
-sleep(10)
+#sleep(10)
 
 def sendsms(number,text):
     ser.write('AT+CMGF=1\r\n')
     sleep(2)
+    #ser.write('AT+CSCS=\"GSM\"\r\n')
     ser.write('AT+CMGS="%s"\r\n' % number)
     ser.write('%s' % text)
     ser.write(ascii.ctrl('z'))    
     print "Text: %s  \nhas been sent to: %s" %(text,number)
-
+    ser.close()
 
 def read_message(x):
     if x.startswith('+CMGL:'):
