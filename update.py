@@ -8,7 +8,7 @@ data1='{"doc":{"status":"done"}}'
 index='password_reset'
 type='request'
 id=sys.argv[1]
-url='192.168.54.101'
+url='192.168.54.74'
 es=elasticsearch.Elasticsearch(host=url)
 def update():
 

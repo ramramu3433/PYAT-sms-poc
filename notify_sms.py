@@ -29,7 +29,7 @@ ser.write('AT+CSCS=\"GSM\"\r\n')
 sleep(1)
 number=[]
 parsed_msg=[]
-endpoint='http://192.168.54.101:9200/password_reset/request/'
+endpoint='http://192.168.54.74:9200/password_reset/request/'
 #parse
 class Encoder(json.JSONEncoder):
     def default(self, obj):
@@ -55,11 +55,28 @@ if __name__=="__main__":
              x.update({"status":"new"})
              
              logger.info("Message Received From {} at {} , Content is {}".format(x["number"],x["date"],x["message"]))
-             if x["message"].upper()=="PASSWORD RESET":
+             if x["message"].upper()=="PWDRST":
                 payload=json.dumps(x,cls=Encoder)
                 url=endpoint+str(x["timestamp"])+x["number"]              
                 t=requests.put(url,data=payload,headers=headers)
                 logger.info("{} for {}".format(t.text,x))            
+             elif x["message"].upper()=="UNAC":
+                payload=json.dumps(x,cls=Encoder)
+                url=endpoint+str(x["timestamp"])+x["number"]
+                t=requests.put(url,data=payload,headers=headers)
+                logger.info("{} for {}".format(t.text,x))
+             elif x["message"].upper()=="UNACR":
+                payload=json.dumps(x,cls=Encoder)
+                url=endpoint+str(x["timestamp"])+x["number"]
+                t=requests.put(url,data=payload,headers=headers)
+                logger.info("{} for {}".format(t.text,x))
+             else:
+                payload=json.dumps(x,cls=Encoder)
+                url=endpoint+str(x["timestamp"])+x["number"]
+                t=requests.put(url,data=payload,headers=headers)
+                logger.info("{} for {}".format(t.text,x))
+  
+
          parsed_msg=[]  
          sleep(1)
         
