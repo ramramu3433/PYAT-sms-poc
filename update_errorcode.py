@@ -1,7 +1,7 @@
 import elasticsearch
 import sys,json
 
-data1='{"doc":{"status":"done"}}'
+data1='{"doc":{"status":"codeerror"}}'
 
 
 index='password_reset'
